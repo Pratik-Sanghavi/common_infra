@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-initial-user-credentials
+  namespace: keycloak
+type: Opaque
+stringData:
+  password: local-law-temporary-password
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-bootstrap-initial-users
+  namespace: keycloak
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: configure
+          image: quay.io/keycloak/keycloak:26.7.3
+          env:
+            - name: KC_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-admin-credentials
+                  key: password
+            - name: INITIAL_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-initial-user-credentials
+                  key: password
+          command:
+            - sh
+            - -ec
+          args:
+            - |
+              KCADM=/opt/keycloak/bin/kcadm.sh
+              $KCADM config credentials --server http://keycloak:8082 --realm master --user admin --password "$KC_ADMIN_PASSWORD" >/dev/null
+              USER_ID="$($KCADM get users -r law -q username=sanghavipratikr@gmail.com --fields id | sed -n 's/.*"id" : "\([^"]*\)".*/\1/p' | head -n 1)"
+              if [ -z "$USER_ID" ]; then
+                $KCADM create users -r law -s username=sanghavipratikr@gmail.com -s email=sanghavipratikr@gmail.com -s firstName=Pratik -s lastName=Sanghavi -s enabled=true -s emailVerified=true >/dev/null
+                $KCADM set-password -r law --username sanghavipratikr@gmail.com --new-password "$INITIAL_USER_PASSWORD" --temporary
+              fi
+              $KCADM add-roles -r law --uusername sanghavipratikr@gmail.com --rolename attorney
