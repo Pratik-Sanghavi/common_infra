@@ -19,11 +19,16 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
+      volumes:
+        - name: realm-import
+          configMap:
+            name: keycloak-realm-import
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.7.3
           args:
             - start-dev
+            - --import-realm
           ports:
             - name: http
               containerPort: 8080
@@ -66,6 +71,10 @@ spec:
               value: http://localhost:8082
             - name: KC_HOSTNAME_STRICT
               value: "false"
+          volumeMounts:
+            - name: realm-import
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
           readinessProbe:
             httpGet:
               path: /health/ready
