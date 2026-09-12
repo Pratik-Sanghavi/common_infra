@@ -29,7 +29,26 @@ spec:
           type: ClusterIP
         consoleService:
           type: ClusterIP
-        users: []
+        policies:
+          - name: lead-api-resume-access
+            statements:
+              - resources:
+                  - arn:aws:s3:::lead-resumes
+                actions:
+                  - s3:GetBucketLocation
+                  - s3:ListBucket
+                  - s3:ListBucketMultipartUploads
+              - resources:
+                  - arn:aws:s3:::lead-resumes/*
+                actions:
+                  - s3:AbortMultipartUpload
+                  - s3:GetObject
+                  - s3:ListMultipartUploadParts
+                  - s3:PutObject
+        users:
+          - accessKey: lead-api
+            secretKey: lead-api-local-s3-secret
+            policy: lead-api-resume-access
         buckets:
           - name: lead-resumes
             policy: none
