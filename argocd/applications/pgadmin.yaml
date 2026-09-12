@@ -16,6 +16,7 @@ spec:
           password: admin
         service:
           type: LoadBalancer
+          port: 5050
   destination:
     server: https://kubernetes.default.svc
     namespace: pgadmin
