@@ -46,7 +46,7 @@ spec:
                 username="$1"
                 email="$2"
                 role="$3"
-                user_id="$($KCADM get users -r law -q username="$username" --fields id | sed -n 's/.*"id" : "\([^"]*\)".*/\1/p' | head -n 1)"
+                user_id="$($KCADM get users -r law -q email="$email" --fields id | sed -n 's/.*"id" : "\([^"]*\)".*/\1/p' | head -n 1)"
                 if [ -z "$user_id" ]; then
                   $KCADM create users -r law -s username="$username" -s email="$email" -s firstName=Pratik -s lastName=Sanghavi -s enabled=true -s emailVerified=true >/dev/null
                   $KCADM set-password -r law --username "$username" --new-password "$INITIAL_USER_PASSWORD" --temporary
