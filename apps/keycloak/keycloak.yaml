@@ -62,6 +62,10 @@ spec:
               value: "true"
             - name: KC_PROXY_HEADERS
               value: xforwarded
+            - name: KC_HOSTNAME
+              value: http://localhost:8082
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
           readinessProbe:
             httpGet:
               path: /health/ready
@@ -89,10 +93,10 @@ metadata:
   labels:
     app.kubernetes.io/name: keycloak
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app.kubernetes.io/name: keycloak
   ports:
     - name: http
-      port: 8080
+      port: 8082
       targetPort: http
