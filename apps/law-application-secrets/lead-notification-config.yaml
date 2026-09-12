@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lead-notification-config
+  namespace: law-application
+data:
+  MAILGUN_API_BASE_URL: https://api.mailgun.net
+  MAILGUN_DOMAIN: mail.pratiksanghavi.in
+  MAILGUN_FROM: attorney@mail.pratiksanghavi.in
+  ATTORNEY_INTAKE_EMAIL: attorney@mail.pratiksanghavi.in
