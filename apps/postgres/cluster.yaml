@@ -16,5 +16,23 @@ spec:
         login: true
         passwordSecret:
           name: keycloak-db-credentials
+      - name: lead_intake
+        ensure: present
+        login: true
+        connectionLimit: 10
+        passwordSecret:
+          name: lead-intake-db-credentials
+      - name: attorney_api
+        ensure: present
+        login: true
+        connectionLimit: 20
+        passwordSecret:
+          name: attorney-api-db-credentials
+      - name: notification_worker
+        ensure: present
+        login: true
+        connectionLimit: 10
+        passwordSecret:
+          name: notification-worker-db-credentials
   storage:
     size: 1Gi
