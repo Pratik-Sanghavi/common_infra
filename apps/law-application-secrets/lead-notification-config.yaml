@@ -7,4 +7,5 @@ data:
   MAILGUN_API_BASE_URL: https://api.mailgun.net
   MAILGUN_DOMAIN: mail.pratiksanghavi.in
   MAILGUN_FROM: attorney@mail.pratiksanghavi.in
-  ATTORNEY_INTAKE_EMAIL: attorney@mail.pratiksanghavi.in
+  MAIL_REPLY_TO: sanghavipratikr@gmail.com
+  ATTORNEY_INTAKE_EMAIL: sanghavipratikr@gmail.com
