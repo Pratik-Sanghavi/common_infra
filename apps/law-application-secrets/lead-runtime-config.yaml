@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lead-runtime-config
+  namespace: law-application
+data:
+  OIDC_ISSUER_URL: http://localhost:8082/realms/law
+  OIDC_CLIENT_ID: attorney-web
+  TEMPORAL_ADDRESS: temporal-frontend.temporal.svc.cluster.local:7233
+  TEMPORAL_NAMESPACE: alma-law-namespace
