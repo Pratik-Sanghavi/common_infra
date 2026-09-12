@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: temporal
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://go.temporal.io/helm-charts
+    chart: temporal
+    targetRevision: '*'
+    helm:
+      valuesObject:
+        web:
+          service:
+            type: LoadBalancer
+            port: 8081
+        server:
+          config:
+            persistence:
+              defaultStore: default
+              visibilityStore: visibility
+              datastores:
+                default:
+                  sql:
+                    createDatabase: false
+                    manageSchema: true
+                    pluginName: postgres12_pgx
+                    driverName: postgres12_pgx
+                    databaseName: temporal
+                    connectAddr: postgres-rw.database.svc.cluster.local:5432
+                    connectProtocol: tcp
+                    user: app
+                    existingSecret: temporal-db-secret
+                    secretKey: password
+                visibility:
+                  sql:
+                    createDatabase: false
+                    manageSchema: true
+                    pluginName: postgres12_pgx
+                    driverName: postgres12_pgx
+                    databaseName: temporal_visibility
+                    connectAddr: postgres-rw.database.svc.cluster.local:5432
+                    connectProtocol: tcp
+                    user: app
+                    existingSecret: temporal-db-secret
+                    secretKey: password
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: temporal
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
