@@ -32,4 +32,5 @@ spec:
               REVOKE ALL ON SCHEMA public FROM PUBLIC;
               GRANT USAGE, CREATE ON SCHEMA public TO attorney_api;
               GRANT USAGE ON SCHEMA public TO lead_intake, notification_worker;
+              ALTER DEFAULT PRIVILEGES FOR ROLE attorney_api IN SCHEMA public GRANT SELECT, INSERT ON TABLES TO lead_intake;
               SQL
