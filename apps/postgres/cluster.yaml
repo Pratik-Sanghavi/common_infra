@@ -9,5 +9,12 @@ spec:
     initdb:
       database: app
       owner: app
+  managed:
+    roles:
+      - name: keycloak
+        ensure: present
+        login: true
+        passwordSecret:
+          name: keycloak-db-credentials
   storage:
     size: 1Gi
