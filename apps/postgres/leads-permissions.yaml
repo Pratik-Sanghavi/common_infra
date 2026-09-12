@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: leads-permissions
+  namespace: database
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: configure
+          image: postgres:18.4-alpine
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: attorney-api-db-credentials
+                  key: password
+          command:
+            - sh
+            - -ec
+          args:
+            - |
+              psql "host=postgres-rw.database.svc.cluster.local port=5432 dbname=leads user=attorney_api sslmode=disable" -v ON_ERROR_STOP=1 <<'SQL'
+              REVOKE ALL ON DATABASE leads FROM PUBLIC;
+              GRANT CONNECT ON DATABASE leads TO attorney_api, lead_intake, notification_worker;
+              REVOKE ALL ON SCHEMA public FROM PUBLIC;
+              GRANT USAGE, CREATE ON SCHEMA public TO attorney_api;
+              GRANT USAGE ON SCHEMA public TO lead_intake, notification_worker;
+              SQL
