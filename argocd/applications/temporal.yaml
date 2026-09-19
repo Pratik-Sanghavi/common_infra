@@ -24,8 +24,6 @@ spec:
               namespace:
                 - name: default
                   retention: 3d
-                - name: alma-law-namespace
-                  retention: 3d
             persistence:
               defaultStore: default
               visibilityStore: visibility
