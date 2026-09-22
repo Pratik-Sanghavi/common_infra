@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sandbox-application-system
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Pratik-Sanghavi/sandbox-application.git
+    targetRevision: main
+    path: sandbox-system/dns
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sandbox-system-ns-1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
