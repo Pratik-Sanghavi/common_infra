@@ -24,7 +24,7 @@ spec:
                     command:
                       - sh
                       - -c
-                      - find . -type f -name '*.sops.yaml' -print -quit | grep -q .
+                      - find . -type f -name '*.sops.yaml' ! -name '.sops.yaml' -print -quit | grep -q .
                 generate:
                   command:
                     - sh
@@ -32,7 +32,7 @@ spec:
                   args:
                     - |
                       set -eu
-                      find . -type f -name '*.sops.yaml' -exec sh -c '
+                      find . -type f -name '*.sops.yaml' ! -name '.sops.yaml' -exec sh -c '
                         for file do
                           decrypted="${file%.sops.yaml}.yaml"
                           sops --decrypt --output "$decrypted" "$file"
