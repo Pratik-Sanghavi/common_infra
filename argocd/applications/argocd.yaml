@@ -24,7 +24,7 @@ spec:
                     command:
                       - sh
                       - -c
-                      - find . -type f -name '*.sops.yaml' ! -name '.sops.yaml' -print -quit | grep -q .
+                      - find . -type f -name '*.sops.yaml' ! -name '.sops.yaml' -print -quit
                 generate:
                   command:
                     - sh
