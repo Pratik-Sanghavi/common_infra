@@ -42,7 +42,7 @@ spec:
         repoServer:
           extraContainers:
             - name: sops-kustomize
-              image: localhost:5000/common-infra/argocd-sops-cmp@sha256:338c6d36c177bb26472a6bf0d1e270f32ac318b616d51eb6cfaef05f7d61c366
+              image: localhost:5000/common-infra/argocd-sops-cmp:0.1.1
               imagePullPolicy: IfNotPresent
               command:
                 - /var/run/argocd/argocd-cmp-server
