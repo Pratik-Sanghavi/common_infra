@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sandbox-application-mock-servers
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Pratik-Sanghavi/sandbox-application.git
+    targetRevision: HEAD
+    path: mock-servers
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mock-servers-ns-1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
