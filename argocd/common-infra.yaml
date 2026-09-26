@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Pratik-Sanghavi/common_infra.git
-    targetRevision: main
+    targetRevision: pratik/submission
     path: argocd
   destination:
     server: https://kubernetes.default.svc
