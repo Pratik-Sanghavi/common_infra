@@ -34,7 +34,7 @@ LOAD CSV WITH HEADERS FROM 'file:///financials.csv' AS row
 WITH row WHERE trim(coalesce(row.entity_id, '')) <> ''
 MATCH (e:LegalEntity {entity_id: row.entity_id})
 MERGE (f:FinancialResult {entity_id: row.entity_id, fiscal_year: toInteger(row.fiscal_year)})
-SET f.currency = row.currency, f.revenue = toFloat(row.revenue), f.related_party_revenue = toFloat(row.related_party_revenue),
+SET f.currency = row.currency, f.fx_per_usd = toFloat(row.fx_per_usd), f.revenue = toFloat(row.revenue), f.related_party_revenue = toFloat(row.related_party_revenue),
     f.cogs = toFloat(row.cogs), f.opex = toFloat(row.opex), f.royalty_expense = toFloat(row.royalty_expense),
     f.operating_profit = toFloat(row.operating_profit), f.total_costs = toFloat(row.total_costs),
     f.total_operating_assets = toFloat(row.total_operating_assets), f.source = 'mock CSV', f.illustrative = true
