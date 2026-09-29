@@ -16,6 +16,7 @@ spec:
       valuesObject:
         config:
           dbms.security.allow_csv_import_from_file_urls: "true"
+          dbms.security.auth_enabled: "false"
           server.directories.import: "/var/lib/neo4j/import"
         neo4j:
           name: neo4j

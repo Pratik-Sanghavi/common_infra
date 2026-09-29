@@ -15,20 +15,12 @@ spec:
         - name: bootstrap
           image: neo4j:2026.09.0
           imagePullPolicy: IfNotPresent
-          env:
-            - name: NEO4J_AUTH
-              valueFrom:
-                secretKeyRef:
-                  name: neo4j-auth
-                  key: NEO4J_AUTH
           command:
             - /bin/sh
             - -ec
             - |
-              NEO4J_USER="${NEO4J_AUTH%%/*}"
-              NEO4J_PASSWORD="${NEO4J_AUTH#*/}"
               for attempt in $(seq 1 60); do
-                if cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 --username "$NEO4J_USER" --password "$NEO4J_PASSWORD" 'RETURN 1 AS ready'; then
+                if cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 'RETURN 1 AS ready'; then
                   break
                 fi
                 if [ "$attempt" = 60 ]; then
@@ -37,7 +29,7 @@ spec:
                 fi
                 sleep 2
               done
-              cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 --username "$NEO4J_USER" --password "$NEO4J_PASSWORD" --file /seed/bootstrap.cypher
+              cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 --file /seed/bootstrap.cypher
           volumeMounts:
             - name: seed
               mountPath: /seed
