@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: neo4j-tp-bootstrap
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: neo4j:2026.09.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NEO4J_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: neo4j-auth
+                  key: NEO4J_AUTH
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              NEO4J_USER="${NEO4J_AUTH%%/*}"
+              NEO4J_PASSWORD="${NEO4J_AUTH#*/}"
+              for attempt in $(seq 1 60); do
+                if cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 --username "$NEO4J_USER" --password "$NEO4J_PASSWORD" 'RETURN 1 AS ready'; then
+                  break
+                fi
+                if [ "$attempt" = 60 ]; then
+                  echo 'Neo4j did not become ready in time.' >&2
+                  exit 1
+                fi
+                sleep 2
+              done
+              cypher-shell --non-interactive --address bolt://neo4j.graphdb-ns-1.svc.cluster.local:7687 --username "$NEO4J_USER" --password "$NEO4J_PASSWORD" --file /seed/bootstrap.cypher
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+              readOnly: true
+      volumes:
+        - name: seed
+          configMap:
+            name: neo4j-tp-seed
+            items:
+              - key: bootstrap.cypher
+                path: bootstrap.cypher

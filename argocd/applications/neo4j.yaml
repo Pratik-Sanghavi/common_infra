@@ -31,6 +31,14 @@ spec:
         volumes:
           data:
             mode: defaultStorageClass
+        additionalVolumes:
+          - name: tp-seed-data
+            configMap:
+              name: neo4j-tp-seed
+        additionalVolumeMounts:
+          - name: tp-seed-data
+            mountPath: /var/lib/neo4j/import
+            readOnly: true
   destination:
     server: https://kubernetes.default.svc
     namespace: graphdb-ns-1

@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - bootstrap/job.yaml
+configMapGenerator:
+  - name: neo4j-tp-seed
+    files:
+      - bootstrap.cypher=bootstrap/bootstrap.cypher
+      - entities.csv=data/entities.csv
+      - financials.csv=data/financials.csv
+      - ic_transactions.csv=data/ic_transactions.csv
+      - tp_rules.csv=data/tp_rules.csv
+      - comparables_distributors.csv=data/comparables_distributors.csv
+      - comparables_services.csv=data/comparables_services.csv
+generatorOptions:
+  disableNameSuffixHash: true

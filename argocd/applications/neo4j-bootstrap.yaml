@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: neo4j-bootstrap
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Pratik-Sanghavi/common_infra.git
+    targetRevision: transfer-pricing
+    path: apps/neo4j
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: graphdb-ns-1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
