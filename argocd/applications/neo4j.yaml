@@ -14,6 +14,9 @@ spec:
     helm:
       releaseName: neo4j
       valuesObject:
+        config:
+          dbms.security.allow_csv_import_from_file_urls: "true"
+          server.directories.import: "/var/lib/neo4j/import"
         neo4j:
           name: neo4j
           edition: community
