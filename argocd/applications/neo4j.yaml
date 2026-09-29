@@ -14,10 +14,11 @@ spec:
     helm:
       releaseName: neo4j
       valuesObject:
+        disableLookups: true
         neo4j:
           name: neo4j
           edition: community
-          password: ""
+          passwordFromSecret: neo4j-auth
         services:
           neo4j:
             enabled: true
