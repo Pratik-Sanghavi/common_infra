@@ -8,34 +8,39 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: keycloak
-    targetRevision: 25.2.0
+    repoURL: https://codecentric.github.io/helm-charts
+    chart: keycloakx
+    targetRevision: 7.4.0
     helm:
       releaseName: keycloak
       values: |
         fullnameOverride: keycloak
-        auth:
-          adminUser: admin
-          existingSecret: keycloak-admin-credentials
-          passwordSecretKey: admin-password
-        replicaCount: 1
-        production: false
-        httpEnabled: true
-        hostnameStrict: false
+        replicas: 1
+        image:
+          repository: quay.io/keycloak/keycloak
+          tag: "26.8.1"
         service:
           type: LoadBalancer
-          ports:
-            http: 8082
-        postgresql:
-          enabled: false
-        externalDatabase:
-          host: postgres-rw.database.svc.cluster.local
+          httpPort: 8082
+        http:
+          enabled: true
+          relativePath: /
+        database:
+          vendor: postgres
+          hostname: postgres-rw.database.svc.cluster.local
           port: 5432
-          user: keycloak
           database: keycloak
+          username: keycloak
           existingSecret: keycloak-db-credentials
-          existingSecretPasswordKey: password
+          existingSecretKey: password
+        extraEnv: |
+          - name: KC_BOOTSTRAP_ADMIN_USERNAME
+            value: admin
+          - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-admin-credentials
+                key: admin-password
         resources:
           requests:
             cpu: 250m

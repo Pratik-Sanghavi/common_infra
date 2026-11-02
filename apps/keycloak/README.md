@@ -1,7 +1,6 @@
 # Keycloak
 
-Keycloak is deployed from the Bitnami Helm chart by `argocd/applications/keycloak.yaml` and runs in the `keycloak` namespace. It connects to the CloudNativePG cluster declared in `apps/postgres`.
-
+Keycloak is deployed from the Codecentric `keycloakx` Helm chart by `argocd/applications/keycloak.yaml` and runs in the `keycloak` namespace. The chart uses the official `quay.io/keycloak/keycloak:26.8.1` image and connects to the CloudNativePG cluster declared in `apps/postgres`.
 ## One-time database credentials
 
 Create the source credential in the `database` namespace before syncing the Keycloak application. The secret is intentionally not committed to Git.
