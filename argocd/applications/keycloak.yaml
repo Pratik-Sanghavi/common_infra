@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: keycloak
+    targetRevision: 25.2.0
+    helm:
+      releaseName: keycloak
+      values: |
+        fullnameOverride: keycloak
+        auth:
+          adminUser: admin
+          existingSecret: keycloak-admin-credentials
+          passwordSecretKey: admin-password
+        replicaCount: 1
+        production: false
+        httpEnabled: true
+        hostnameStrict: false
+        service:
+          type: LoadBalancer
+          ports:
+            http: 8082
+        postgresql:
+          enabled: false
+        externalDatabase:
+          host: postgres-rw.database.svc.cluster.local
+          port: 5432
+          user: keycloak
+          database: keycloak
+          existingSecret: keycloak-db-credentials
+          existingSecretPasswordKey: password
+        resources:
+          requests:
+            cpu: 250m
+            memory: 768Mi
+          limits:
+            memory: 1Gi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keycloak
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
